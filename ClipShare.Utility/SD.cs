@@ -4,7 +4,12 @@ namespace ClipShare.Utility
 {
     public static class SD
     {
-        public static string IsActive(this IHtmlHelper html, string controller, string action, string cssClass = "active") 
+        public const string ModerateRole = "moderate";
+        public const string AdminRole = "admin";
+        public const string UserRole = "user";
+        public static readonly List<string> Roles = new () { ModerateRole, AdminRole, UserRole };
+
+        public static string IsActive(this IHtmlHelper html, string controller, string action, string cssClass = "active")
         {
             var routeData = html.ViewContext.RouteData;
             var routeAction = routeData.Values["action"]?.ToString();

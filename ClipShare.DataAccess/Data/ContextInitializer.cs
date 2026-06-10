@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ClipShare.Core.Entities;
+using ClipShare.Utility;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +12,54 @@ namespace ClipShare.DataAccess.Data
 {
     public static class ContextInitializer
     {
-        public static void Initialize(Context context) 
+        public static async Task InitializeAsync(Context context,
+            UserManager<AppUser> userManager,
+            RoleManager<AppRole> roleManager) 
         {
             if (context.Database.GetPendingMigrations().Count() > 0) 
             {
                 context.Database.Migrate();
+            }
+
+            if (!roleManager.Roles.Any()) 
+            {
+                foreach (var role in SD.Roles) 
+                {
+                    await roleManager.CreateAsync(new AppRole { Name = role });
+                }
+            }
+
+            if (!userManager.Users.Any()) 
+            {
+                var admin = new AppUser
+                {
+                    Name = "admin",
+                    Email = "admin@example.com",
+                    UserName = "admin"
+                };
+
+                await userManager.CreateAsync(admin, "Admin123");
+                await userManager.AddToRolesAsync(admin, SD.Roles);
+
+                var john = new AppUser
+                {
+                    Name = "John",
+                    Email = "john@example.com",
+                    UserName = "john"
+                };
+
+                await userManager.CreateAsync(john, "Password123");
+                await userManager.AddToRoleAsync(john, SD.UserRole);
+
+                var mary = new AppUser
+                {
+                    Name = "Mary",
+                    Email = "mary@example.com",
+                    UserName = "mary"
+                };
+
+                await userManager.CreateAsync(mary, "Password123");
+                await userManager.AddToRoleAsync(mary, SD.ModerateRole);
             }
         }
     }

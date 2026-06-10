@@ -1,12 +1,13 @@
+using ClipShare.Core.Entities;
 using ClipShare.DataAccess.Data;
 using ClipShare.Extensions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews()
     .AddRazorRuntimeCompilation();
 
-builder.AddApplicationServices();
+builder
+    .AddApplicationServices()
+    .AddAuthenticationServices();
 
 var app = builder.Build();
 
@@ -31,28 +34,31 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-InitializeContext();
+await InitializeContext();
 app.Run();
 
-void InitializeContext() 
+async Task InitializeContext() 
 {
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
 
     try 
     {
-        var context = services.GetRequiredService<Context>();
-        ContextInitializer.Initialize(context);
+        var context = services.GetService<Context>();
+        var userManager = services.GetService<UserManager<AppUser>>();
+        var roleManager = services.GetService<RoleManager<AppRole>>();
+        await ContextInitializer.InitializeAsync(context, userManager, roleManager);
     }
     catch (Exception ex) 
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
+        var logger = services.GetService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while migrating the DataBase");
     }
 }

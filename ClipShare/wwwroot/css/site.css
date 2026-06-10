@@ -34,3 +34,7 @@ body {
 .active {
     color: palegreen !important;
 }
+
+.main {
+    min-height: 700px;
+}

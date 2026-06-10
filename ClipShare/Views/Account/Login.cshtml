@@ -1,0 +1,56 @@
+﻿@model ClipShare.ViewModels.Account.LoginViewModel
+
+<div class="d-flex justify-content-center">
+    <div class="col-lg-5">
+        <main class="form-signin">
+            <form method="post">
+                <input hidden type="text" asp-for="ReturnUrl"/>
+                <div class="text-center my-4">
+                    <h3 class="mb-3 font-weight-normal text-info">Login</h3>
+                </div>
+
+                @if(Model.Erros.Any()) 
+                { 
+                    @foreach (var erro in Model.Erros)
+                    {
+                        <div class="alert alert-dismissible alert-danger" id="removerErro">
+                            <span class="message">@erro.Value</span>
+                            <a class="close btn text-danger">×</a>
+                        </div>
+                    } 
+                }
+
+                <div class="form-floating mt-2 mb-3">
+                    <input asp-for="UserName" placeholder="Username or Email" class="form-control" />
+                    <label asp-for="UserName"></label>
+                    <span asp-validation-for="UserName" class="invalid-feedback"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" asp-for="Password" placeholder="Password" class="form-control" />
+                    <label asp-for="Password"></label>
+                    <span asp-validation-for="Password" class="invalid-feedback"></span>
+                </div>
+
+                <div class="d-grid mt-4 px-1">
+                    <button class="btn btn-lg btn-info" type="submit">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let removerErro = document.querySelector('#removerErro a')
+
+        removerErro.addEventListener('click', function () {
+            console.log(removerErro.parentElement);
+            removerErro.parentElement.classList.add('d-none');
+
+        });
+    </script>
+}

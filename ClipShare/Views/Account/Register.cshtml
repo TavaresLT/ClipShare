@@ -1,0 +1,69 @@
+﻿@model ClipShare.ViewModels.Account.RegisterViewModel
+
+<div class="d-flex justify-content-center">
+    <div class="col-lg-5">
+        <main class="form-signin">
+            <form method="post">
+                <div class="text-center my-4">
+                    <h1 class="h3 font-weight-normal">
+                        Singup today to watch free <span class="text-danger">Clips</span>
+                    </h1>
+                </div>
+
+                @if (Model is not null && Model.Erros.Any())
+                {
+                    @foreach (var erro in Model.Erros)
+                    {
+                        <div class="alert" id="removerErro">
+                            <span class="message">@erro.Value</span>
+                            <a class="close btn text-danger">×</a>
+                        </div>
+                    }
+                }
+
+                <div class="form-floating mt-2 mb-3">
+                    <input asp-for="Name" placeholder="Name (Username)" class="form-control" />
+                    <label asp-for="Name"></label>
+                    <span asp-validation-for="Name" class="invalid-feedback"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Email" placeholder="Email" class="form-control" />
+                    <label asp-for="Email"></label>
+                    <span asp-validation-for="Email" class="invalid-feedback"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" asp-for="Password" placeholder="Password" class="form-control" />
+                    <label asp-for="Password"></label>
+                    <span asp-validation-for="Password" class="invalid-feedback"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control" />
+                    <label asp-for="ConfirmPassword"></label>
+                    <span asp-validation-for="ConfirmPassword" class="invalid-feedback"></span>
+                </div>
+
+                <div class="d-grid mt-4 px-1">
+                    <button class="btn btn-lg btn-warning" type="submit">
+                        Register
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let removerErro = document.querySelector('#removerErro a')
+
+        removerErro.addEventListener('click', function () {
+            console.log(removerErro.parentElement);
+            removerErro.parentElement.classList.add('d-none');
+
+        });
+    </script>
+}
